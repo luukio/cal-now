@@ -1,4 +1,4 @@
-# Webpack 
+# Populates Calendar 
 Populates Calendar Dates in a specific way.
 
 The main plugin code is in `src/code.ts`. The HTML for the UI is in
