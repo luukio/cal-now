@@ -1,6 +1,6 @@
 import * as moment from 'moment'
 import components from './components'
-import { findFrameParent, resizeParentToNodes, loadFontsOfComponents } from './utils'
+import { findFrameParent, resizeElementToNodes, loadFontsOfComponents } from './utils'
 
 figma.showUI(__html__, {
   height: 340,
@@ -24,7 +24,7 @@ figma.ui.onmessage = msg => {
   }
 };
 
-//Populate Dates
+//Make components
 async function create(): Promise<string | undefined> {
 
   const componentsExist = figma.currentPage.findAll(n => (n.name.includes('cal#')))
@@ -60,7 +60,7 @@ async function create(): Promise<string | undefined> {
       newComponent.appendChild(node)
     }
 
-    resizeParentToNodes(newComponent, newComponent.children)
+    resizeElementToNodes(newComponent, newComponent.children)
     backgroundFrame.resizeWithoutConstraints(1680, 840)
 
   }
@@ -101,24 +101,24 @@ async function generate(message): Promise<string | undefined> {
   const anchorY = -200
 
   //Make Header
-  let xAxis = anchorX
+  let currentX = anchorX
   for (let i = 0; i < weekStructure.length; i++) {
     let node: InstanceNode
     if (i >= 0 && i <= 4) node = daynameComponent.createInstance()
     else node = daynameWeekendComponent.createInstance()
-    node.x = xAxis
+    node.x = currentX
     node.y = anchorY
 
     //Change text
     const text = node.findOne(n => n.name === '#dayname' && n.type == 'TEXT') as TextNode
     if(text) text.characters = weekStructure[i]
 
-    xAxis += node.width
+    currentX += node.width
   }
 
   //Make Calendar
-  let yAxis = anchorY + daynameComponent.height
-  xAxis = anchorX //reset x
+  let currentY = anchorY + daynameComponent.height
+  currentX = anchorX //reset x
   for (let i = 0; i <= message.weeks; i++) {
     for (let j = 0; j < calStructure.length; j++) {
       let node: InstanceNode
@@ -126,41 +126,40 @@ async function generate(message): Promise<string | undefined> {
       if (day == 'Monday') node = mondayComponent.createInstance()
       else if (day == 'Day') node = dayComponent.createInstance()
       else if (day == 'Weekend') node = weekendComponent.createInstance()
-      node.x = xAxis
-      node.y = yAxis
+      node.x = currentX
+      node.y = currentY
 
-      const dayText = node.findOne(n => n.name === '#day' && n.type == 'TEXT') as TextNode
-      const weekText = node.findOne(n => n.name === '#week' && n.type == 'TEXT') as TextNode
-      const monthText = node.findOne(n => n.name === '#month' && n.type == 'TEXT') as TextNode
-      const background = node.findOne(n => n.name === "#background" && n.type === "RECTANGLE") as RectangleNode
+      const dayTextNode = node.findOne(n => n.name === '#day' && n.type == 'TEXT') as TextNode
+      const weekTextNode = node.findOne(n => n.name === '#week' && n.type == 'TEXT') as TextNode
+      const monthTextNode = node.findOne(n => n.name === '#month' && n.type == 'TEXT') as TextNode
+      const backgroundNode = node.findOne(n => n.name === "#background" && n.type === "RECTANGLE") as RectangleNode
 
       const curDate = currentDateStart.clone().add( (i*7) + j, 'days')
       const curDayName = curDate.format('DD')
       const curMonthName = curDate.format('MMMM')
 
-      if(dayText) dayText.characters = curDayName
-      if(weekText) weekText.characters = String(i)
+      if(dayTextNode) dayTextNode.characters = curDayName
+      if(weekTextNode) weekTextNode.characters = String(i)
+      if(monthTextNode) {
+        if (curDate.date() === 1) monthTextNode.characters = curMonthName //Only add month at start of every month
+        else if ((curDate.date() === 2 || curDate.date() === 3) && curDate.day() === 1) monthTextNode.characters = curMonthName //If it was in weekend, still add on Monday
+        else monthTextNode.characters = ""
 
-      if(monthText) monthText.characters = curMonthName
-      if(monthText) {
-        if (curDate.date() === 1) monthText.characters  = curMonthName //Only add month at start of every month
-        else if ((curDate.date() === 2 || curDate.date() === 3) && curDate.day() === 1) monthText.characters  = curMonthName //If it was in weekend, still add on Monday
-        else monthText.characters  = ""
-        if (i === 0 && j === 0) monthText.characters  = curMonthName //Always add on first one
+        if (i === 0 && j === 0) monthTextNode.characters = curMonthName //Always add month on first box anyway
       }
       
       //Alternate month for colours
       if (curDate.date() === 1) monthSwitch = !monthSwitch
-      if(background) {
-        if (monthSwitch) background.opacity = 0.5
-        else background.opacity = 0.25
+      if(backgroundNode) {
+        if (monthSwitch) backgroundNode.opacity = 0.5
+        else backgroundNode.opacity = 0.25
       }
 
-      xAxis += node.width
+      currentX += node.width
     }
 
-    xAxis = anchorX //reset x
-    yAxis += mondayComponent.height
+    currentX = anchorX //reset x
+    currentY += mondayComponent.height
   }
 
   return "Done. ⚡️"

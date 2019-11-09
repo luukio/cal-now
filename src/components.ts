@@ -1,15 +1,8 @@
-const back = {
-    set: {
-        type: 'FRAME',
-        width: 1680,
-        height: 840,
-    },
-    name: 'Calendar Components',
-    backgrounds: [ { type: 'SOLID', color: {r:1,g:1,b:1} } ],
-    x: -100,
-    y: -300,
-}
+import { clone, hexToRGB } from './utils'
 
+////  INDIVIDUAL LAYERS ////
+
+// Background
 const background = {
     set: {
         type: 'RECTANGLE',
@@ -26,17 +19,12 @@ const background = {
     y: 0,
 }
 
+// Background for Weekend
 const backgroundWeekend = clone(background)
 backgroundWeekend.set.width = background.set.width / 2
 backgroundWeekend.fills = [ { type: 'SOLID', color: hexToRGB("#E3E3E3") } ]
 
-const backgroundHeader = clone(background)
-backgroundHeader.set.height = 125
-backgroundHeader.strokes = []
-
-const backgroundWeekendHeader = clone(backgroundHeader)
-backgroundWeekendHeader.set.width = background.set.width / 2
-
+// Day Number Text
 const day = {
     set: {
         type: 'TEXT',
@@ -60,10 +48,12 @@ const day = {
     y: 0,
 }
 
+// Day Number Text Weekend
 const dayWeekend = clone(day)
 dayWeekend.x = 143
 dayWeekend.opacity = 0.1
 
+// Week Text
 const week = {
     set: {
         type: 'TEXT',
@@ -87,6 +77,7 @@ const week = {
     y: 330,
 }
 
+// Month Text
 const month = {
     set: {
         type: 'TEXT',
@@ -106,6 +97,16 @@ const month = {
     y: 35,
 }
 
+// Background for Header
+const backgroundHeader = clone(background)
+backgroundHeader.set.height = 125
+backgroundHeader.strokes = []
+
+// Background for Weekend Header
+const backgroundWeekendHeader = clone(backgroundHeader)
+backgroundWeekendHeader.set.width = background.set.width / 2
+
+// Day Name Text for Header
 const dayname = {
     set: {
         type: 'TEXT',
@@ -126,86 +127,44 @@ const dayname = {
     y: 28,
 }
 
+// Day Name Text for Weekend Header
 const daynameWeekend = clone(dayname)
 daynameWeekend.set.width = background.set.width / 2
 daynameWeekend.characters = 'Sat'
 
 
-//Components Groups
-var monDayGroup = {
-    name: 'cal#Monday',
+////  COMPONENTS ////
+
+var weekNoComponent = {
+    name: 'cal#Week',
     x: 0, y: 0,
-    layers: { background: background, day: day, week: week, month: month }
+    layers: { week: week }
 }
 
-var weekDayGroup = {
+var weekDayComponent = {
     name: 'cal#Day',
-    x: 600, y: 0,
+    x: 200, y: 0,
     layers: { background: background, day: day, month: month }
 }
 
-var weekendGroup = {
+var weekendComponent = {
     name: 'cal#Weekend',
-    x: 1200, y: 0,
+    x: 800, y: 0,
     layers: { background: backgroundWeekend, day: dayWeekend}
 }
 
-var dayNameGroup = {
+var dayNameComponent = {
     name: 'cal#Dayname',
-    x: 0, y: -200,
+    x: 200, y: -200,
     layers: { background: backgroundHeader, dayname: dayname}
 }
 
-var dayNameWeekendGroup = {
+var dayNameWeekendComponent = {
     name: 'cal#DaynameWeekend',
-    x: 1200, y: -200,
+    x: 800, y: -200,
     layers: { background: backgroundWeekendHeader, dayname: daynameWeekend}
 }
 
 export default {
-    monDayGroup, dayNameGroup, weekDayGroup, weekendGroup, dayNameWeekendGroup
+    weekNoComponent, dayNameComponent, weekDayComponent, weekendComponent, dayNameWeekendComponent
 }
-
-function hexToRGB(h) {
-    let r = 0, g = 0, b = 0
-
-    if (h.length == 4) {
-        r = "0x" + h[1] + h[1]
-        g = "0x" + h[2] + h[2]
-        b = "0x" + h[3] + h[3]
-        
-    } else if (h.length == 7) {
-        r = "0x" + h[1] + h[2]
-        g = "0x" + h[3] + h[4]
-        b = "0x" + h[5] + h[6]
-    }
-
-    r = +(r / 255).toFixed(2)
-    g = +(g / 255).toFixed(2)
-    b = +(b / 255).toFixed(2)
-
-    return {r: r, g: g, b: b} 
-}
-
-function clone(val) {
-    const type = typeof val
-    if (val === null) {
-      return null
-    } else if (type === 'undefined' || type === 'number' ||
-               type === 'string' || type === 'boolean') {
-      return val
-    } else if (type === 'object') {
-      if (val instanceof Array) {
-        return val.map(x => clone(x))
-      } else if (val instanceof Uint8Array) {
-        return new Uint8Array(val)
-      } else {
-        let o = {}
-        for (const key in val) {
-          o[key] = clone(val[key])
-        }
-        return o
-      }
-    }
-    throw 'unknown'
-  }

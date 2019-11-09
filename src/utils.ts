@@ -8,8 +8,8 @@ export function findFrameParent(node) {
     }
 }
 
-export function resizeParentToNodes(parent, nodes) {
-    //Resize frame group to show all the weeks
+export function resizeElementToNodes(element, nodes) {
+    //Resize frame group to show all the children
     let width: number
     let height: number
     for (const child of nodes) {
@@ -21,28 +21,71 @@ export function resizeParentToNodes(parent, nodes) {
         ? Math.max(height, child.y + child.height)
         : child.y + child.height
     }
-    parent.resizeWithoutConstraints(width, height)
+    element.resizeWithoutConstraints(width, height)
+}
+
+export function hexToRGB(h: string) {
+    let r, g, b
+
+    if (h.length == 4) {
+        r = "0x" + h[1] + h[1]
+        g = "0x" + h[2] + h[2]
+        b = "0x" + h[3] + h[3]
+        
+    } else if (h.length == 7) {
+        r = "0x" + h[1] + h[2]
+        g = "0x" + h[3] + h[4]
+        b = "0x" + h[5] + h[6]
+    }
+
+    r = +(r / 255).toFixed(2)
+    g = +(g / 255).toFixed(2)
+    b = +(b / 255).toFixed(2)
+
+    return {r: r, g: g, b: b} 
+}
+
+export function clone(val) {
+    const type = typeof val
+    if (val === null) {
+        return null
+    } else if (type === 'undefined' || type === 'number' || type === 'string' || type === 'boolean') {
+        return val
+    } else if (type === 'object') {
+        if (val instanceof Array) {
+            return val.map(x => clone(x))
+        } else if (val instanceof Uint8Array) {
+            return new Uint8Array(val)
+        } else {
+            let o = {}
+            for (const key in val) {
+                o[key] = clone(val[key])
+            }
+        return o
+        }
+    }
+    throw 'unknown'
 }
 
 export async function loadFontsOfComponents(components): Promise<string | undefined> {
-    const textElements = []
+    const textNodeList = []
     const fontsList = []
 
     //Only find text nodes
     for (const component of components) {
         const textNodes = (component as ComponentNode).findAll(n => n.type === "TEXT")
         for (const textNode of textNodes) {
-        textElements.push(textNode)
+        textNodeList.push(textNode)
         }
     }
 
     //Make list of all fonts used
-    for (const element of textElements) {
-        if (element.hasMissingFont) return "One of the fonts is missing, please add or replace them first"
+    for (const node of textNodeList) {
+        if (node.hasMissingFont) return "One of the fonts is missing, please add or replace them first"
 
-        let len = element.characters.length
+        let len = node.characters.length
         for (let i = 0; i < len; i++) {
-        const fontName = element.getRangeFontName(i, i+1)
+        const fontName = node.getRangeFontName(i, i+1)
         const containsFont = fontsList.findIndex(i => i.family === fontName.family && i.style === fontName.style) >= 0;
         if (!containsFont) fontsList.push(fontName)
         }    
