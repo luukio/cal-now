@@ -1,14 +1,14 @@
 {
-  "name": "sandbox",
+  "name": "cal-now",
   "version": "1.0.0",
-  "description": "",
+  "description": "Cal Now Figma Plugin",
   "main": "code.js",
   "scripts": {
     "test": "echo \"Error: no test specified\" && exit 1",
     "dev": "npx webpack --mode=development --watch",
     "build": "npx webpack --mode=production"
   },
-  "author": "",
+  "author": "Luuk Rombouts",
   "license": "ISC",
   "dependencies": {
     "css-loader": "^3.1.0",

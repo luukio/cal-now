@@ -1,81 +1,93 @@
 import { clone, hexToRGB } from './utils';
 ////  INDIVIDUAL LAYERS ////
-// Background
-const background = {
-    set: {
-        type: 'RECTANGLE',
-        width: 540,
-        height: 440,
-    },
-    name: '#background',
-    opacity: 0.25,
-    fills: [{ type: 'SOLID', color: hexToRGB("#CCC") }],
-    strokes: [{ type: 'SOLID', color: hexToRGB("#FFF") }],
-    strokeWeight: 4,
-    strokeAlign: 'INSIDE',
-    x: 0,
-    y: 0,
-};
-// Background for Weekend
-const backgroundWeekend = clone(background);
-backgroundWeekend.set.width = background.set.width / 2;
-backgroundWeekend.fills = [{ type: 'SOLID', color: hexToRGB("#E3E3E3") }];
-// Day Number Text
-const day = {
-    set: {
-        type: 'TEXT',
-        width: 125,
-        height: 120,
-    },
-    name: '#day',
-    fontName: {
-        family: 'Work Sans',
-        style: 'SemiBold',
-    },
-    textAlignVertical: 'CENTER',
-    characters: '01',
-    fontSize: 86,
-    letterSpacing: {
-        value: -5,
-        unit: 'PIXELS',
-    },
-    textCase: 'ORIGINAL',
-    x: 415,
-    y: 0,
-};
-// Day Number Text Weekend
-const dayWeekend = clone(day);
-dayWeekend.x = 143;
-dayWeekend.opacity = 0.1;
-// Week Text
+// Week Number Text
 const week = {
     set: {
         type: 'TEXT',
-        width: 120,
-        height: 110,
+        width: 60,
+        height: 72,
     },
     name: '#week',
     fontName: {
         family: 'Work Sans',
         style: 'SemiBold',
     },
-    textAlignVertical: 'CENTER',
+    textAlignVertical: 'BOTTOM',
     characters: '0',
-    fontSize: 68,
+    fontSize: 58,
     opacity: 0.15,
     letterSpacing: {
         value: -5,
         unit: 'PIXELS',
     },
-    x: 24,
-    y: 330,
+    x: 22,
+    y: 254,
+    constraints: {
+        horizontal: 'MIN',
+        vertical: 'MAX'
+    },
 };
+// Background
+const background = {
+    set: {
+        type: 'RECTANGLE',
+        width: 400,
+        height: 340,
+    },
+    name: '#background',
+    opacity: 1,
+    fills: [{ type: 'SOLID', color: hexToRGB("#EBEBEB") }],
+    strokes: [{ type: 'SOLID', color: hexToRGB("#FFF") }],
+    strokeWeight: 4,
+    strokeAlign: 'INSIDE',
+    x: 0,
+    y: 0,
+    constraints: {
+        horizontal: 'STRETCH',
+        vertical: 'STRETCH'
+    },
+};
+// Background for Weekend
+const backgroundWeekend = clone(background);
+backgroundWeekend.set.width = background.set.width / 2;
+backgroundWeekend.fills = [{ type: 'SOLID', color: hexToRGB("#F5F5F5") }];
+// Day Number Text
+const day = {
+    set: {
+        type: 'TEXT',
+        width: 94,
+        height: 90,
+    },
+    name: '#day',
+    fontName: {
+        family: 'Work Sans',
+        style: 'SemiBold',
+    },
+    textAlignHorizontal: 'RIGHT',
+    characters: '01',
+    fontSize: 72,
+    letterSpacing: {
+        value: -5,
+        unit: 'PIXELS',
+    },
+    textCase: 'ORIGINAL',
+    x: 283,
+    y: 12,
+    constraints: {
+        horizontal: 'MAX',
+        vertical: 'MIN'
+    },
+};
+// Day Number Text Weekend
+const dayWeekend = clone(day);
+dayWeekend.x = 83;
+dayWeekend.opacity = 0.1;
 // Month Text
 const month = {
     set: {
         type: 'TEXT',
-        width: 350,
-        height: 60,
+        width: 240,
+        height: 46,
     },
     name: '#month',
     fontName: {
@@ -83,16 +95,22 @@ const month = {
         style: 'Bold',
     },
     characters: 'Month',
-    fontSize: 50,
+    fontSize: 36,
     opacity: 0.5,
     textCase: 'UPPER',
     x: 30,
-    y: 35,
+    y: 26,
+    constraints: {
+        horizontal: 'MIN',
+        vertical: 'MIN'
+    },
 };
 // Background for Header
 const backgroundHeader = clone(background);
-backgroundHeader.set.height = 125;
+backgroundHeader.set.height = 80;
 backgroundHeader.strokes = [];
+backgroundHeader.opacity = 1;
+backgroundHeader.fills = [{ type: 'SOLID', color: hexToRGB("#000") }];
 // Background for Weekend Header
 const backgroundWeekendHeader = clone(backgroundHeader);
 backgroundWeekendHeader.set.width = background.set.width / 2;
@@ -101,7 +119,7 @@ const dayname = {
     set: {
         type: 'TEXT',
         width: background.set.width,
-        height: 72,
+        height: 50,
     },
     name: '#dayname',
     fontName: {
@@ -111,41 +129,41 @@ const dayname = {
     textAlignVertical: 'CENTER',
     textAlignHorizontal: 'CENTER',
     characters: 'Monday',
-    fontSize: 60,
+    fontSize: 40,
     textCase: 'UPPER',
+    fills: [{ type: 'SOLID', color: hexToRGB("#FFF") }],
     x: 0,
-    y: 28,
+    y: 15,
+    constraints: {
+        horizontal: 'STRETCH',
+        vertical: 'SCALE'
+    },
 };
 // Day Name Text for Weekend Header
 const daynameWeekend = clone(dayname);
 daynameWeekend.set.width = background.set.width / 2;
 daynameWeekend.characters = 'Sat';
 ////  COMPONENTS ////
-var weekNoComponent = {
-    name: 'cal#Week',
+var dayHeaderComponent = {
+    name: 'cal#Dayname',
     x: 0, y: 0,
-    layers: { week: week }
+    layers: { background: backgroundHeader, dayname: dayname }
 };
-var weekDayComponent = {
+var dayHeaderWeekendComponent = {
+    name: 'cal#DaynameWeekend',
+    x: 440, y: 0,
+    layers: { background: backgroundWeekendHeader, dayname: daynameWeekend }
+};
+var dayComponent = {
     name: 'cal#Day',
-    x: 200, y: 0,
-    layers: { background: background, day: day, month: month }
+    x: 0, y: 120,
+    layers: { background: background, day: day, week: week, month: month }
 };
 var weekendComponent = {
     name: 'cal#Weekend',
-    x: 800, y: 0,
+    x: 440, y: 120,
     layers: { background: backgroundWeekend, day: dayWeekend }
 };
-var dayNameComponent = {
-    name: 'cal#Dayname',
-    x: 200, y: -200,
-    layers: { background: backgroundHeader, dayname: dayname }
-};
-var dayNameWeekendComponent = {
-    name: 'cal#DaynameWeekend',
-    x: 800, y: -200,
-    layers: { background: backgroundWeekendHeader, dayname: daynameWeekend }
-};
 export default {
-    weekNoComponent, dayNameComponent, weekDayComponent, weekendComponent, dayNameWeekendComponent
+    dayComponent, weekendComponent, dayHeaderComponent, dayHeaderWeekendComponent
 };

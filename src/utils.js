@@ -6,17 +6,28 @@ var __awaiter = (this && this.__awaiter) || function (thisArg, _arguments, P, ge
         step((generator = generator.apply(thisArg, _arguments || [])).next());
     });
 };
-export function findFrameParent(node) {
+export function frameParent(node) {
     if (node.parent.type === "FRAME") {
-        const parentID = node.parent.id;
-        return parentID;
+        return node.parent;
     }
     else {
         const parent = node.parent;
-        return findFrameParent(parent);
+        return frameParent(parent);
     }
 }
-export function resizeElementToNodes(element, nodes) {
+export function positionElementToNodes(element, nodes) {
+    let x = nodes[0].x;
+    let y = nodes[0].y;
+    for (const child of nodes) {
+        if (child.x < x)
+            x = child.x;
+        if (child.y < y)
+            y = child.y;
+    }
+    element.x = x;
+    element.y = y;
+}
+export function resizeElementToNodes(element, nodes, padding) {
     //Resize frame group to show all the children
     let width;
     let height;
@@ -27,8 +38,23 @@ export function resizeElementToNodes(element, nodes) {
         height = height
             ? Math.max(height, child.y + child.height)
             : child.y + child.height;
+        child.x = child.x + padding;
+        child.y = child.y + padding;
     }
-    element.resizeWithoutConstraints(width, height);
+    element.resizeWithoutConstraints(width + padding * 2, height + padding * 2);
+}
+export function frameNodesAndShow(nodes, name, padding) {
+    const frame = figma.createFrame();
+    frame.name = name;
+    frame.exportSettings = [{ format: "PDF" }];
+    positionElementToNodes(frame, nodes);
+    for (const component of nodes) {
+        component.x = component.x - frame.x;
+        component.y = component.y - frame.y;
+        frame.appendChild(component);
+    }
+    resizeElementToNodes(frame, nodes, padding);
+    figma.viewport.scrollAndZoomIntoView([frame]);
 }
 export function hexToRGB(h) {
     let r, g, b;

@@ -1,51 +1,25 @@
 @import url('https://fonts.googleapis.com/css?family=Work+Sans:400,700&display=swap');
 
 body {
-  font-family: "Work Sans", sans-serif;
-  font-size: 12px;
-  margin: 20px;
-  background: #000;
-  color: white;
+  font-family: 'Inter', 'Roboto', sans-serif;
+  font-size: 11px;
+  background: #FFF;
+  margin: 4px 0;
+  color: black;
+  --primary: #18A0FB;
+  --secondary: #76F6EE; 
 }
 
-h2, p {
-  margin: .4rem 0;
+.wrapper {
+  padding: 0 16px;
+}
+
+h2, h4, h6, p {
+  margin: .6rem 0;
 }
 
 h4 {
   font-weight: normal;
-}
-button {
-  border-radius: 5px;
-  background: black;
-  color: white;
-  border: none;
-  padding: 8px 15px;
-  margin-right: 10px;
-  box-shadow: inset 0 0 0 1px white;
-  outline: none;
-  cursor: pointer;
-  width: 100%;
-}
-
-#create {
-  box-shadow: none;
-  border: 2px solid #76F6EE;
-  background: #76F6EE;
-  color: black;
-}
-
-#generate {
-  box-shadow: none;
-  border: 2px solid #18A0FB;
-  background: #18A0FB;
-  color: white;
-}
-
-button.disabled {
-  background: black;
-  color: white;
-  border: 2px solid white;
 }
 
 .flex {
@@ -64,7 +38,7 @@ button:last-child, .flex div:last-child {
 }
 
 input {
-  border: none;
+  border: 1px solid #ddd;
   outline: none;
   padding: 8px;
   margin-bottom: 4px;
@@ -76,8 +50,62 @@ input {
   color: black;
 }
 
-input:hover { box-shadow: inset 0 0 0 1px rgba(0, 0, 0, 0.1); }
-#create:hover, #generate:hover { border: 2px solid white; }
-button:focus { box-shadow: inset 0 0 0 2px #18A0FB; }
-#create:focus, #generate:focus { box-shadow: inset 0 0 0 2px rgba(0, 0, 0, 0.3); }
-input:focus { box-shadow: inset 0 0 0 2px #18A0FB; }
+input:focus {
+  border: 1px solid #aaa
+}
+
+button {
+  border-radius: 5px;
+  background: black;
+  color: white;
+  border: 2px solid transparent;
+  padding: 10px 15px;
+  margin: 10px 10px 0 0;
+  outline: none;
+  cursor: pointer;
+  width: 100%;
+  box-shadow: none;
+  transition: all .6s cubic-bezier(0.165, 0.84, 0.44, 1) .3s;
+}
+
+#create {
+  background: var(--primary);
+  color: white;
+}
+
+#generate {
+  background: var(--secondary);
+  color: black;
+}
+
+#create:disabled, #generate:disabled {
+  opacity: 0.2;
+  background: none;
+  border: 2px solid var(--secondary);
+  color: var(--secondary);
+  cursor: auto;
+}
+
+#readmore {
+  margin: 10px 0;
+  cursor: pointer;
+  border-top: 1px solid #ddd;
+  border-bottom: 1px solid #ddd;
+}
+
+#readmore h6 {
+  text-transform: uppercase;
+  color: #aaa;
+}
+
+#readmore-inner {
+  overflow: hidden;
+  height: 120px;
+  opacity: 1;
+  transition: height .5s cubic-bezier(0.165, 0.84, 0.44, 1), opacity .3s ease-in-out .4s
+}
+
+#readmore-inner.collapsed {
+  height: 0;
+  opacity: 0;
+}
