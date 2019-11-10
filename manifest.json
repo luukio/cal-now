@@ -1,7 +1,7 @@
 {
   "name": "Cal Now",
   "id": "746043192205210994",
-  "api": "1.0.5",
+  "api": "1.0.0",
   "main": "dist/code.js",
   "ui": "dist/ui.html"
 }
