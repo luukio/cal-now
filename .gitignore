@@ -17,4 +17,4 @@ typings/
 
 .npm
 .env
-
+.DS_Store
