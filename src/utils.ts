@@ -19,22 +19,22 @@ export function positionElementToNodes(element, nodes) {
 }
 
 export function resizeElementToNodes(element, nodes, padding) {
-    //Resize frame group to show all the children
+    //Resize element to fit all the other elements, with padding
     let width: number
     let height: number
     for (const child of nodes) {
         width = width
-        ? Math.max(width, child.x + child.width)
-        : child.x + child.width
+            ? Math.max(width, child.x + child.width)
+            : child.x + child.width
 
         height = height
-        ? Math.max(height, child.y + child.height)
-        : child.y + child.height
+            ? Math.max(height, child.y + child.height)
+            : child.y + child.height
 
         child.x = child.x + padding
         child.y = child.y + padding
     }
-    element.resizeWithoutConstraints(width + padding*2, height + padding*2)
+    element.resizeWithoutConstraints(width + padding * 2, height + padding * 2)
 }
 
 export function frameNodesAndShow(nodes, name, padding) {
@@ -61,7 +61,7 @@ export function hexToRGB(h: string) {
         r = "0x" + h[1] + h[1]
         g = "0x" + h[2] + h[2]
         b = "0x" + h[3] + h[3]
-        
+
     } else if (h.length == 7) {
         r = "0x" + h[1] + h[2]
         g = "0x" + h[3] + h[4]
@@ -72,7 +72,7 @@ export function hexToRGB(h: string) {
     g = +(g / 255).toFixed(2)
     b = +(b / 255).toFixed(2)
 
-    return {r: r, g: g, b: b} 
+    return { r: r, g: g, b: b }
 }
 
 export function clone(val) {
@@ -91,34 +91,31 @@ export function clone(val) {
             for (const key in val) {
                 o[key] = clone(val[key])
             }
-        return o
+            return o
         }
     }
     throw 'unknown'
 }
 
 export async function loadFontsOfComponents(components): Promise<string | undefined> {
-    const textNodeList = []
     const fontsList = []
 
     //Only find text nodes
     for (const component of components) {
-        const textNodes = (component as ComponentNode).findAll(n => n.type === "TEXT")
+        const textNodes = (component as ComponentNode).findAll(n => n.type === "TEXT") as TextNode[]
+        
+        //Check all fonts used, make list
         for (const textNode of textNodes) {
-        textNodeList.push(textNode)
+            if (textNode.hasMissingFont) return "One of the fonts is missing, please add or replace them first"
+
+            //Check fonts on each character of the text
+            let len = textNode.characters.length
+            for (let i = 0; i < len; i++) {
+                const fontName = textNode.getRangeFontName(i, i + 1) as FontName
+                const fontIsInList = fontsList.findIndex(i => i.family === fontName.family && i.style === fontName.style) >= 0;
+                if (!fontIsInList) fontsList.push(fontName)
+            }
         }
-    }
-
-    //Make list of all fonts used
-    for (const node of textNodeList) {
-        if (node.hasMissingFont) return "One of the fonts is missing, please add or replace them first"
-
-        let len = node.characters.length
-        for (let i = 0; i < len; i++) {
-            const fontName = node.getRangeFontName(i, i+1)
-            const containsFont = fontsList.findIndex(i => i.family === fontName.family && i.style === fontName.style) >= 0;
-            if (!containsFont) fontsList.push(fontName)
-        }    
     }
 
     //Require relevant fonts

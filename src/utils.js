@@ -28,7 +28,7 @@ export function positionElementToNodes(element, nodes) {
     element.y = y;
 }
 export function resizeElementToNodes(element, nodes, padding) {
-    //Resize frame group to show all the children
+    //Resize element to fit all the other elements, with padding
     let width;
     let height;
     for (const child of nodes) {
@@ -100,25 +100,22 @@ export function clone(val) {
 }
 export function loadFontsOfComponents(components) {
     return __awaiter(this, void 0, void 0, function* () {
-        const textNodeList = [];
         const fontsList = [];
         //Only find text nodes
         for (const component of components) {
             const textNodes = component.findAll(n => n.type === "TEXT");
+            //Check all fonts used, make list
             for (const textNode of textNodes) {
-                textNodeList.push(textNode);
-            }
-        }
-        //Make list of all fonts used
-        for (const node of textNodeList) {
-            if (node.hasMissingFont)
-                return "One of the fonts is missing, please add or replace them first";
-            let len = node.characters.length;
-            for (let i = 0; i < len; i++) {
-                const fontName = node.getRangeFontName(i, i + 1);
-                const containsFont = fontsList.findIndex(i => i.family === fontName.family && i.style === fontName.style) >= 0;
-                if (!containsFont)
-                    fontsList.push(fontName);
+                if (textNode.hasMissingFont)
+                    return "One of the fonts is missing, please add or replace them first";
+                //Check fonts on each character of the text
+                let len = textNode.characters.length;
+                for (let i = 0; i < len; i++) {
+                    const fontName = textNode.getRangeFontName(i, i + 1);
+                    const fontIsInList = fontsList.findIndex(i => i.family === fontName.family && i.style === fontName.style) >= 0;
+                    if (!fontIsInList)
+                        fontsList.push(fontName);
+                }
             }
         }
         //Require relevant fonts
