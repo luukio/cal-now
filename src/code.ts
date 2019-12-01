@@ -1,5 +1,5 @@
 import { create } from './commands/create'
-import { generate } from './commands/generate'
+import { build } from './commands/build'
 
 figma.showUI(__html__, {
   height: 200,
@@ -13,7 +13,7 @@ figma.ui.onmessage = msg => {
       figma.notify(message, {timeout: 2000})
     })
   } else if (msg.type === 'generate') {
-    generate(msg.data).then((message: string | undefined) => {
+    build(msg.data).then((message: string | undefined) => {
       figma.notify(message)
     })
   } else if (msg.type === 'openinfo') {

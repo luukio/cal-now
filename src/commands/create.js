@@ -8,21 +8,15 @@ var __awaiter = (this && this.__awaiter) || function (thisArg, _arguments, P, ge
 };
 import styles from '../assets/styles';
 import components from '../assets/components';
-import { frameNodesAndShow, resizeElementToNodes } from '../utils';
+import { frameNodesAndShow, resizeElementToNodes, loadStyles } from '../utils';
 //Make components
 export function create() {
     return __awaiter(this, void 0, void 0, function* () {
         const componentsExist = figma.currentPage.findAll(n => (n.name.includes('cal#')));
         if (componentsExist.length > 0)
             return "'cal#' components exist, delete them first or start building.";
-        //each style in list
-        for (const key in styles) {
-            const style = styles[key];
-            const newStyle = figma.createPaintStyle();
-            newStyle.name = style.name;
-            newStyle.paints = style.colour;
-            style.id = newStyle.id;
-        }
+        //load styles
+        loadStyles(styles);
         //each component in list
         for (const key in components) {
             const component = components[key];
@@ -46,6 +40,9 @@ export function create() {
                     if (key != 'set')
                         node[key] = layer[key];
                 }
+                //if layer has a fill style, add it
+                if (layer.set.fillStyle)
+                    node.fillStyleId = styles[layer.set.fillStyle].id;
                 //resize layer to set size
                 node.resizeWithoutConstraints(layer.set.width, layer.set.height);
                 newComponent.appendChild(node);

@@ -6,7 +6,7 @@ export const week = {
     set: {
         type: 'TEXT',
         width: 60,
-        height: 72,
+        height: 72
     },
     name: '#week',
     fontName: {
@@ -35,14 +35,14 @@ const background = {
         type: 'RECTANGLE',
         width: 400,
         height: 340,
+        fillStyle: 'backgroundStyle'
     },
     name: '#background',
     opacity: 1,
     fills: styles.backgroundStyle.colour,
-    fillStyleId: styles.backgroundStyle.id,
     strokes: [ { type: 'SOLID', color: hexToRGB("#FFF") } ],
     strokeWeight: 4,
-    strokeAlign: 'INSIDE',
+    strokeAlign: 'CENTER',
     x: 0,
     y: 0,
     constraints: {
@@ -54,8 +54,8 @@ const background = {
 // Background for Weekend
 const backgroundWeekend = clone(background)
 backgroundWeekend.set.width = background.set.width / 2
+backgroundWeekend.set.fillStyle = 'backgroundWeekendStyle'
 backgroundWeekend.fills = styles.backgroundWeekendStyle.colour
-backgroundWeekend.fillStyleId = styles.backgroundWeekendStyle.id
 
 // Day Number Text
 const day = {
@@ -119,7 +119,7 @@ const backgroundHeader = clone(background)
 backgroundHeader.set.height = 80
 backgroundHeader.strokes = []
 backgroundHeader.opacity = 1
-backgroundHeader.fills = [ { type: 'SOLID', color: hexToRGB("#000") } ]
+backgroundHeader.set.fillStyle = 'backgroundHeaderStyle'
 
 // Background for Weekend Header
 const backgroundWeekendHeader = clone(backgroundHeader)

@@ -7,9 +7,10 @@ var __awaiter = (this && this.__awaiter) || function (thisArg, _arguments, P, ge
     });
 };
 import * as moment from 'moment';
-import { frameParent, frameNodesAndShow, loadFontsOfComponents } from '../utils';
+import styles from '../assets/styles';
+import { frameParent, frameNodesAndShow, loadFontsOfComponents, loadStyles } from '../utils';
 //Populate Dates
-export function generate(message) {
+export function build(message) {
     return __awaiter(this, void 0, void 0, function* () {
         const components = figma.currentPage.findAll(n => (n.name.includes('cal#')));
         if (!components)
@@ -27,8 +28,10 @@ export function generate(message) {
         const weekendComponent = figma.currentPage.findOne(n => n.name === 'cal#Weekend');
         const daynameComponent = figma.currentPage.findOne(n => n.name === 'cal#Dayname');
         const daynameWeekendComponent = figma.currentPage.findOne(n => n.name === 'cal#DaynameWeekend');
+        loadStyles(styles);
         if (!dayComponent || !weekendComponent || !daynameComponent || !daynameWeekendComponent)
             return "Can't find one of the calendar elements, please rebuild!";
+        //remove calendar if it exists
         const calendarExists = figma.currentPage.findOne(n => (n.name.includes('calItem#')));
         if (calendarExists)
             frameParent(calendarExists).remove();
@@ -100,10 +103,12 @@ export function generate(message) {
                     if (curDate.date() === 1)
                         monthSwitch = !monthSwitch;
                     if (backgroundNode) {
-                        if (monthSwitch)
-                            backgroundNode.opacity = 1;
-                        else
-                            backgroundNode.opacity = 0.6;
+                        if (!monthSwitch) {
+                            if (j >= 0 && j <= 4)
+                                backgroundNode.fillStyleId = styles.backgroundAltStyle.id;
+                            else
+                                backgroundNode.fillStyleId = styles.backgroundAltWeekendStyle.id;
+                        }
                     }
                 }
             }

@@ -15,6 +15,24 @@ export function frameParent(node) {
         return frameParent(parent);
     }
 }
+export function loadStyles(styles) {
+    const existingFillStyles = figma.getLocalPaintStyles();
+    for (const key in styles) {
+        const style = styles[key];
+        const fillStyle = existingFillStyles.find(({ name }) => name === style.name);
+        if (fillStyle)
+            style.id = fillStyle.id;
+        else
+            newStyle(style);
+    }
+}
+function newStyle(style) {
+    const newStyle = figma.createPaintStyle();
+    newStyle.name = style.name;
+    newStyle.paints = style.colour;
+    //save id for later use
+    style.id = newStyle.id;
+}
 export function positionElementToNodes(element, nodes) {
     let x = nodes[0].x;
     let y = nodes[0].y;

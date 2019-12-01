@@ -1,8 +1,9 @@
 import * as moment from 'moment'
-import { frameParent, frameNodesAndShow, loadFontsOfComponents } from '../utils'
+import styles from '../assets/styles'
+import { frameParent, frameNodesAndShow, loadFontsOfComponents, loadStyles } from '../utils'
 
 //Populate Dates
-export async function generate(message): Promise<string | undefined> {
+export async function build(message): Promise<string | undefined> {
 
     const components = figma.currentPage.findAll(n => (n.name.includes('cal#')))
     if (!components) return "Make or go to page with calendar components first. 🙄"
@@ -20,8 +21,11 @@ export async function generate(message): Promise<string | undefined> {
     const daynameComponent = figma.currentPage.findOne(n => n.name === 'cal#Dayname') as ComponentNode
     const daynameWeekendComponent = figma.currentPage.findOne(n => n.name === 'cal#DaynameWeekend') as ComponentNode
 
+    loadStyles(styles)
+
     if (!dayComponent || !weekendComponent || !daynameComponent || !daynameWeekendComponent) return "Can't find one of the calendar elements, please rebuild!"
 
+    //remove calendar if it exists
     const calendarExists = figma.currentPage.findOne(n => (n.name.includes('calItem#')))
     if (calendarExists) frameParent(calendarExists).remove()
 
@@ -89,8 +93,10 @@ export async function generate(message): Promise<string | undefined> {
                 //Alternate month for colours
                 if (curDate.date() === 1) monthSwitch = !monthSwitch
                 if (backgroundNode) {
-                    if (monthSwitch) backgroundNode.opacity = 1
-                    else backgroundNode.opacity = 0.6
+                    if (!monthSwitch) {
+                        if (j >= 0 && j <= 4) backgroundNode.fillStyleId = styles.backgroundAltStyle.id
+                        else backgroundNode.fillStyleId = styles.backgroundAltWeekendStyle.id
+                    }
                 }
             }
         }

@@ -1,6 +1,7 @@
+import layers from '../assets/layers'
 import styles from '../assets/styles'
 import components from '../assets/components'
-import { frameNodesAndShow, resizeElementToNodes } from '../utils'
+import { frameNodesAndShow, resizeElementToNodes, loadStyles } from '../utils'
 
 //Make components
 export async function create(): Promise<string | undefined> {
@@ -8,16 +9,8 @@ export async function create(): Promise<string | undefined> {
     const componentsExist = figma.currentPage.findAll(n => (n.name.includes('cal#')))
     if (componentsExist.length > 0) return "'cal#' components exist, delete them first or start building."
 
-    //each style in list
-    for (const key in styles) {
-        const style = styles[key]
-
-        const newStyle = figma.createPaintStyle()
-        newStyle.name = style.name
-        newStyle.paints = style.colour
-
-        style.id = newStyle.id
-    }
+    //load styles
+    loadStyles(styles)
 
     //each component in list
     for (const key in components) {
@@ -31,7 +24,7 @@ export async function create(): Promise<string | undefined> {
 
         //each layer in component
         for (const key in component.layers) {
-            let node: SceneNode
+            let node: RectangleNode | TextNode
             const layer = component.layers[key]
 
             if (layer.set.type === 'RECTANGLE') node = figma.createRectangle()
@@ -42,6 +35,9 @@ export async function create(): Promise<string | undefined> {
                 if (key == 'fontName') await figma.loadFontAsync(layer[key])
                 if (key != 'set') node[key] = layer[key]
             }
+
+            //if layer has a fill style, add it
+            if (layer.set.fillStyle) node.fillStyleId = styles[layer.set.fillStyle].id
 
             //resize layer to set size
             node.resizeWithoutConstraints(layer.set.width, layer.set.height)
