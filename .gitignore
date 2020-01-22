@@ -11,6 +11,9 @@ pids
 *.seed
 *.pid.lock
 
+# TS environment
+src/**/*.js
+
 node_modules/
 dist/
 typings/
