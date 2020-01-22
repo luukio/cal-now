@@ -1,5 +1,8 @@
 import * as moment from 'moment'
+import layers from '../assets/layers'
 import styles from '../assets/styles'
+import components from '../assets/components'
+import { weekStructure, headerStructure } from '../assets/calendar'
 import { frameParent, frameNodesAndShow, loadFontsOfComponents, loadStyles } from '../utils'
 
 //Populate Dates
@@ -21,21 +24,31 @@ export async function build(message): Promise<string | undefined> {
     const daynameComponent = figma.currentPage.findOne(n => n.name === 'cal#Dayname') as ComponentNode
     const daynameWeekendComponent = figma.currentPage.findOne(n => n.name === 'cal#DaynameWeekend') as ComponentNode
 
+    if (!dayComponent || !weekendComponent || !daynameComponent || !daynameWeekendComponent) return "Can't find one of the calendar elements, please rebuild components again!"
+
     loadStyles(styles)
 
-    if (!dayComponent || !weekendComponent || !daynameComponent || !daynameWeekendComponent) return "Can't find one of the calendar elements, please rebuild!"
-
-    //remove calendar if it exists
-    const calendarExists = figma.currentPage.findOne(n => (n.name.includes('calItem#')))
-    if (calendarExists) frameParent(calendarExists).remove()
-
     //Date Variables
-    const currentDateStart = moment(message.date).day(1)
+    const currentDateStart = moment(message.date).day(1).add(-1, 'week')
     let monthSwitch = false
 
-    const ComponentFrame = figma.currentPage.findOne(n => n.name === 'Calendar Components') as ComponentNode
-    const anchorX = ComponentFrame.x + ComponentFrame.width + 400
-    const anchorY = ComponentFrame.y
+    //find furthest frame
+    let anchorX = 0
+    let anchorY = 0
+    const allFrames = figma.currentPage.findAll(n => n.type == 'FRAME')
+    if (allFrames) {
+        for (const frame of allFrames) {
+            anchorX = (anchorX >= frame.x + frame.width) 
+                        ? anchorX 
+                        : frame.x + frame.width
+            anchorY = anchorY <= frame.y 
+                        ? anchorY 
+                        : frame.y
+        }
+    }
+    
+    //give it a bit of space
+    anchorX = anchorX + 200
 
     //Make Calendar
     let currentX = anchorX
@@ -93,7 +106,7 @@ export async function build(message): Promise<string | undefined> {
                 //Alternate month for colours
                 if (curDate.date() === 1) monthSwitch = !monthSwitch
                 if (backgroundNode) {
-                    if (!monthSwitch) {
+                    if (monthSwitch) {
                         if (j >= 0 && j <= 4) backgroundNode.fillStyleId = styles.backgroundAltStyle.id
                         else backgroundNode.fillStyleId = styles.backgroundAltWeekendStyle.id
                     }
@@ -106,7 +119,7 @@ export async function build(message): Promise<string | undefined> {
         else currentY += dayComponent.height
     }
 
-    const calendarItems = figma.currentPage.findAll(n => (n.name.includes('calItem#')))
+    const calendarItems = figma.currentPage.findAll(n => n.name.includes('calItem#') && n.parent.type == 'PAGE') as InstanceNode[]
     frameNodesAndShow(calendarItems, "Your Calendar", 80)
 
     return "Calendar built. ⚡️"

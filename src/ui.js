@@ -1,7 +1,9 @@
 import './ui.css';
 //Setup elements
-const buildButton = document.getElementById('generate');
-const infoInner = document.getElementById('readmore-inner');
+const step2Element = document.getElementById('step2');
+const buttonElement = document.getElementById('generate');
+const infoElement = document.getElementById('readmore-inner');
+const form = document.getElementById("form");
 let createdValid = false;
 document.getElementById('generate').onclick = () => {
     const datebox = document.getElementById('date');
@@ -15,24 +17,26 @@ document.getElementById('create').onclick = () => {
 document.getElementById('date').valueAsDate = new Date();
 //Readmore
 document.getElementById('readmore').onclick = () => {
-    if (infoInner.classList.contains('collapsed'))
+    if (infoElement.classList.contains('collapsed'))
         parent.postMessage({ pluginMessage: { type: 'openinfo' } }, '*');
     else
         parent.postMessage({ pluginMessage: { type: 'closeinfo' } }, '*');
-    infoInner.classList.toggle('collapsed');
+    infoElement.classList.toggle('collapsed');
 };
 //Fancy enabler
-const form = document.getElementById("form");
-form.addEventListener("change", () => {
-    if (createdValid && form.checkValidity())
-        buildButton.disabled = false;
-    else
-        buildButton.disabled = true;
+form.addEventListener("input", () => {
+    if (createdValid && form.checkValidity()) {
+        buttonElement.disabled = false;
+    }
+    else {
+        buttonElement.disabled = true;
+    }
 });
 onmessage = (event) => {
     if (event.data.pluginMessage == 'created') {
         createdValid = true;
-        if (form.checkValidity())
-            buildButton.disabled = false;
+        if (form.checkValidity()) {
+            step2Element.classList.remove('disabled');
+        }
     }
 };

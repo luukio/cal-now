@@ -1,65 +1,68 @@
+import l from "./layers"
+import c from "./components"
+
 export const headerStructure = [
     {
-        name: 'cal#Dayname',
-        changeLayers: ['#dayname', '#background']
+        name: c.dayHeaderComponent.name,
+        changeLayers: [l.dayname.name, l.background.name]
     },
     {
-        name: 'cal#Dayname',
-        changeLayers: ['#dayname', '#background']
+        name: c.dayHeaderComponent.name,
+        changeLayers: [l.dayname.name, l.background.name]
     },
     {
-        name: 'cal#Dayname',
-        changeLayers: ['#dayname', '#background']
+        name: c.dayHeaderComponent.name,
+        changeLayers: [l.dayname.name, l.background.name]
     },
     {
-        name: 'cal#Dayname',
-        changeLayers: ['#dayname', '#background']
+        name: c.dayHeaderComponent.name,
+        changeLayers: [l.dayname.name, l.background.name]
     },
     {
-        name: 'cal#Dayname',
-        changeLayers: ['#dayname', '#background']
+        name: c.dayHeaderComponent.name,
+        changeLayers: [l.dayname.name, l.background.name]
     },
     {
-        name: 'cal#DaynameWeekend',
-        changeLayers: ['#dayname', '#background'],
+        name: c.dayHeaderWeekendComponent.name,
+        changeLayers: [l.dayname.name, l.background.name],
         weekend: true
     },
     {
-        name: 'cal#DaynameWeekend',
-        changeLayers: ['#dayname', '#background'],
+        name: c.dayHeaderWeekendComponent.name,
+        changeLayers: [l.dayname.name, l.background.name],
         weekend: true
     }
 ]
 
 export const weekStructure = [
     {
-        name: 'cal#Day',
-        changeLayers: ['#day', '#week', '#month', '#background']
+        name: c.dayComponent.name,
+        changeLayers: [l.day.name, l.week.name, l.month.name, l.background.name]
     },
     {
-        name: 'cal#Day',
-        changeLayers: ['#day', '#month', '#background']
+        name: c.dayComponent.name,
+        changeLayers: [l.day.name, l.month.name, l.background.name]
     },
     {
-        name: 'cal#Day',
-        changeLayers: ['#day', '#month', '#background']
+        name: c.dayComponent.name,
+        changeLayers: [l.day.name, l.month.name, l.background.name]
     },
     {
-        name: 'cal#Day',
-        changeLayers: ['#day', '#month', '#background']
+        name: c.dayComponent.name,
+        changeLayers: [l.day.name, l.month.name, l.background.name]
     },
     {
-        name: 'cal#Day',
-        changeLayers: ['#day', '#month', '#background']
+        name: c.dayComponent.name,
+        changeLayers: [l.day.name, l.month.name, l.background.name]
     },
     {
-        name: 'cal#Weekend',
-        changeLayers: ['#day', '#month', '#background'],
+        name: c.weekendComponent.name,
+        changeLayers: [l.day.name, l.month.name, l.background.name],
         weekend: true
     },
     {
-        name: 'cal#Weekend',
-        changeLayers: ['#day', '#month', '#background'],
+        name: c.weekendComponent.name,
+        changeLayers: [l.day.name, l.month.name, l.background.name],
         weekend: true
     }
 ]

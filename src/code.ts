@@ -2,8 +2,8 @@ import { create } from './commands/create'
 import { build } from './commands/build'
 
 figma.showUI(__html__, {
-  height: 200,
-  width: 380
+  height: 360, //90
+  width: 240
 })
 
 figma.ui.onmessage = msg => {
@@ -11,15 +11,17 @@ figma.ui.onmessage = msg => {
   if (msg.type === 'create') {
     create().then((message: string | undefined) => {
       figma.notify(message, {timeout: 2000})
+      // figma.ui.resize(240, 360)
+      figma.ui.postMessage('created')
     })
   } else if (msg.type === 'generate') {
     build(msg.data).then((message: string | undefined) => {
       figma.notify(message)
     })
   } else if (msg.type === 'openinfo') {
-    figma.ui.resize(380, 320)
+    figma.ui.resize(240, 490)
   } else if (msg.type === 'closeinfo') {
-    setTimeout(function() { figma.ui.resize(380, 200) }, 400)
+    setTimeout(function() { figma.ui.resize(240, 360) }, 400)
   } else {
     figma.closePlugin("Message not recognised 🥳")
   }
@@ -27,4 +29,7 @@ figma.ui.onmessage = msg => {
 
 //If components are already created, enable button
 const componentsExist = figma.currentPage.findAll(n => (n.name.includes('cal#')))
-if (componentsExist.length > 0) figma.ui.postMessage('created')
+if (componentsExist.length > 0) {
+  // figma.ui.resize(240, 360)
+  figma.ui.postMessage('created')
+}

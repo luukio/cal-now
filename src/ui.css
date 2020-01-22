@@ -4,14 +4,14 @@ body {
   font-family: 'Inter', 'Roboto', sans-serif;
   font-size: 11px;
   background: #FFF;
-  margin: 4px 0;
+  margin: 10px 14px;
   color: black;
   --primary: #18A0FB;
   --secondary: #76F6EE; 
 }
 
 .wrapper {
-  padding: 0 16px;
+  padding: 0 14px;
 }
 
 h2, h4, h6, p {
@@ -20,6 +20,13 @@ h2, h4, h6, p {
 
 h4 {
   font-weight: normal;
+}
+
+hr {
+  margin: 20px -14px;
+  border: none;
+  border-bottom: #ddd solid 1px;
+  height: 1px;
 }
 
 .flex {
@@ -35,6 +42,19 @@ h4 {
 
 button:last-child, .flex div:last-child {
   margin-right: 0;
+}
+
+#step2 {
+  opacity: 1;
+  transition: all .6s cubic-bezier(0.165, 0.84, 0.44, 1) .3s;
+}
+
+#step2.disabled {
+  opacity: 0.2;
+}
+
+#step2.disabled input {
+  pointer-events: none;
 }
 
 input {
@@ -78,16 +98,20 @@ button {
   color: black;
 }
 
-#create:disabled, #generate:disabled {
-  opacity: 0.2;
+#step2.disabled #create, #step2.disabled #generate, #generate:disabled {
+  pointer-events: none;
   background: none;
   border: 2px solid var(--secondary);
   color: var(--secondary);
   cursor: auto;
 }
 
+#generate:disabled {
+  opacity: 0.2;
+}
+
 #readmore {
-  margin: 10px 0;
+  margin: 20px -14px 10px;
   cursor: pointer;
   border-top: 1px solid #ddd;
   border-bottom: 1px solid #ddd;
@@ -100,7 +124,7 @@ button {
 
 #readmore-inner {
   overflow: hidden;
-  height: 120px;
+  height: 130px;
   opacity: 1;
   transition: height .5s cubic-bezier(0.165, 0.84, 0.44, 1), opacity .3s ease-in-out .4s
 }

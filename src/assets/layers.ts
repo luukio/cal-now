@@ -55,7 +55,6 @@ const background = {
 const backgroundWeekend = clone(background)
 backgroundWeekend.set.width = background.set.width / 2
 backgroundWeekend.set.fillStyle = 'backgroundWeekendStyle'
-backgroundWeekend.fills = styles.backgroundWeekendStyle.colour
 
 // Day Number Text
 const day = {

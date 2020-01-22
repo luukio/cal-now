@@ -1,21 +1,18 @@
-<form id="form" class="flex wrapper">
-    <div>
-        <p>Starts on week</p>
+<button id="create">Build Components</button>
+<hr>
+<div id="step2" class="disabled">
+    <form id="form">
+        <p>Starts on week (0)</p>
         <input required pattern="(?:19|20)[0-9]{2}-(?:(?:0[1-9]|1[0-2])-(?:0[1-9]|1[0-9]|2[0-9])|(?:(?!02)(?:0[1-9]|1[0-2])-(?:30))|(?:(?:0[13578]|1[02])-31))" type="date" id="date">
-    </div>
-    <div>
         <p>Weeks</p>
         <input required min="1" max="99" pattern="[+]?[0-9][1-9]" type="number" id="weeks" value="12">
+    </form>
+    <div id="readmore" class="wrapper">
+        <h6>More Info +</h6>
+        <div id="readmore-inner" class="collapsed">
+            <h4><b>Create the components first</b>, then start building your calendar. If you change their size afterwards, <b>just rebuild again</b>.</h4>
+            <h4>Change the background colors with the generated <b>local color styles</b>. Deselect any layers to easily edit them.</h4>
+        </div>
     </div>
-</form>
-<div id="readmore" class="wrapper">
-    <h6>More Info +</h6>
-    <div id="readmore-inner" class="collapsed">
-        <h4><b>Create the components first, then start building your calendar. <br>If you change their size afterwards, just rebuild. </b></h4>
-        <h4>The plugin can change these component layers: <br>- The text layers <b>'day', 'week'</b> and <b>'month'</b><br>- Rectangle layers named <b>'background'</b> (Color Style)</h4>
-    </div>
-</div>
-<div class="flex wrapper">
-    <button id="create">1 - Create Components</button>
-    <button id="generate" disabled>2 - Build Calendar</button>
+    <button id="generate">Create Calendar</button>
 </div>
