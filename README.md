@@ -1,4 +1,6 @@
-# Cal Now
+![Call Now Figma Plugin](./assets/cover.png)
+
+# Cal Now - Figma Plugin
 Builds components and then generates calendars with number of weeks and a starting date.
 
 The main plugin code is in `src/code.ts`. The HTML for the UI is in
