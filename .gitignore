@@ -13,6 +13,7 @@ pids
 
 # TS environment
 src/**/*.js
+src/*.js
 
 node_modules/
 dist/
