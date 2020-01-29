@@ -7,15 +7,15 @@ const infoElement = document.getElementById('readmore-inner') as HTMLInputElemen
 const form = document.getElementById("form") as HTMLInputElement
 let createdValid = false
 
-document.getElementById('generate').onclick = () => {
+document.getElementById('create').onclick = () => {
   const datebox = document.getElementById('date') as HTMLInputElement
   const weekbox = document.getElementById('weeks') as HTMLInputElement
   const data = {"date": datebox.value, "weeks": weekbox.value}
-  parent.postMessage({ pluginMessage: { type: 'generate', data } }, '*')
+  parent.postMessage({ pluginMessage: { type: 'create', data } }, '*')
 }
 
-document.getElementById('create').onclick = () => {
-  parent.postMessage({ pluginMessage: { type: 'create' } }, '*')
+document.getElementById('build').onclick = () => {
+  parent.postMessage({ pluginMessage: { type: 'build' } }, '*')
 }
 
 (document.getElementById('date') as HTMLInputElement).valueAsDate = new Date()
@@ -38,7 +38,7 @@ form.addEventListener("input", () => {
 })
 
 onmessage = (event) => {
-  if (event.data.pluginMessage == 'created') {
+  if (event.data.pluginMessage == 'built') {
     createdValid = true;
     if (form.checkValidity()) {
       step2Element.classList.remove('disabled')

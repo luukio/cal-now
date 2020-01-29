@@ -1,19 +1,13 @@
 ![Call Now Figma Plugin](./assets/cover.png)
 
-# Cal Now - Figma Plugin
-Builds components and then generates calendars with number of weeks and a starting date.
+# Cal Now — Instant Calendars
+Builds components and creates the calendar.
 
-The main plugin code is in `src/code.ts`. The HTML for the UI is in
-`src/ui.html`, while the embedded JavaScript is in `src/ui.ts`.
+— Builds needed components & color styles
+From here, you can change their size before you create a calendar. Make sure you keep the height the same for the respective weekend components if you don't want any gaps/overlaps in your calendar. 
 
-These are compiled to files in `dist/`, which are what Figma will use to run
-your plugin.
+— Creates the calendar
+This will be based on the provided number of weeks and a starting date. It starts with a week 0, so keep that in mind! The easiest way to change background colors is through the new local styles. Just deselect any layer to see them. 
 
-To build:
-
-    $ npm install
-    $ npx webpack
-
-To test:
-
-    $ npm run dev
+— Changed layer properties
+It replaces the color style of the '#background' layer and changes the text of the layers '#month', '#day' and '#week'.

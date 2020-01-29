@@ -88,17 +88,17 @@ button {
   transition: all .6s cubic-bezier(0.165, 0.84, 0.44, 1) .3s;
 }
 
-#create {
+#build {
   background: var(--primary);
   color: white;
 }
 
-#generate {
+#create {
   background: var(--secondary);
   color: black;
 }
 
-#step2.disabled #create, #step2.disabled #generate, #generate:disabled {
+#step2.disabled #build, #step2.disabled #create, #create:disabled {
   pointer-events: none;
   background: none;
   border: 2px solid var(--secondary);
@@ -106,7 +106,7 @@ button {
   cursor: auto;
 }
 
-#generate:disabled {
+#create:disabled {
   opacity: 0.2;
 }
 

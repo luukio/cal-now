@@ -58,9 +58,10 @@ export function resizeElementToNodes(element, nodes, padding) {
     element.resizeWithoutConstraints(width + padding * 2, height + padding * 2)
 }
 
-export function frameNodesAndShow(nodes, name, padding) {
+export function frameNodesAndShow(nodes, name, padding = 0, color = "#FFF") {
     const frame = figma.createFrame()
     frame.name = name
+    frame.fills = [ { type: 'SOLID', color: hexToRGB(color) } ],
     frame.exportSettings = [{ format: "PDF" }]
 
     positionElementToNodes(frame, nodes)
@@ -118,7 +119,7 @@ export function clone(val) {
     throw 'unknown'
 }
 
-export async function loadFontsOfComponents(components): Promise<string | undefined> {
+export async function loadFontsOfComponents(components): Promise<boolean | undefined> {
     const fontsList = []
 
     //Only find text nodes
@@ -127,7 +128,7 @@ export async function loadFontsOfComponents(components): Promise<string | undefi
         
         //Check all fonts used, make list
         for (const textNode of textNodes) {
-            if (textNode.hasMissingFont) return "One of the fonts is missing, please add or replace them first"
+            if (textNode.hasMissingFont) return true
 
             //Check fonts on each character of the text
             let len = textNode.characters.length

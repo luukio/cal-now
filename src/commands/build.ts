@@ -1,126 +1,59 @@
-import * as moment from 'moment'
 import layers from '../assets/layers'
 import styles from '../assets/styles'
 import components from '../assets/components'
-import { weekStructure, headerStructure } from '../assets/calendar'
-import { frameParent, frameNodesAndShow, loadFontsOfComponents, loadStyles } from '../utils'
+import { frameNodesAndShow, resizeElementToNodes, loadStyles, hexToRGB } from '../utils'
 
-//Populate Dates
-export async function build(message): Promise<string | undefined> {
+//Make components
+export async function build(): Promise<string | undefined> {
 
-    const components = figma.currentPage.findAll(n => (n.name.includes('cal#')))
-    if (!components) return "Make or go to page with calendar components first. 🙄"
-    for (const component of components) {
-        if (component.type !== 'COMPONENT') return "One of your calendar elements is not a component"
-    }
+    const componentsExist = figma.currentPage.findAll(n => (n.name.includes('cal#')))
+    if (componentsExist.length > 0) return "'cal#' components exist, delete them first or start building."
 
-    //Load all used fonts
-    const missingFonts = await loadFontsOfComponents(components)
-    if (missingFonts) return missingFonts
-
-    //The building blocks
-    const dayComponent = figma.currentPage.findOne(n => n.name === 'cal#Day') as ComponentNode
-    const weekendComponent = figma.currentPage.findOne(n => n.name === 'cal#Weekend') as ComponentNode
-    const daynameComponent = figma.currentPage.findOne(n => n.name === 'cal#Dayname') as ComponentNode
-    const daynameWeekendComponent = figma.currentPage.findOne(n => n.name === 'cal#DaynameWeekend') as ComponentNode
-
-    if (!dayComponent || !weekendComponent || !daynameComponent || !daynameWeekendComponent) return "Can't find one of the calendar elements, please rebuild components again!"
-
+    //load styles
     loadStyles(styles)
 
-    //Date Variables
-    const currentDateStart = moment(message.date).day(1).add(-1, 'week')
-    let monthSwitch = false
+    //each component in list
+    for (const key in components) {
+        const component = components[key]
 
-    //find furthest frame
-    let anchorX = 0
-    let anchorY = 0
-    const allFrames = figma.currentPage.findAll(n => n.type == 'FRAME')
-    if (allFrames) {
-        for (const frame of allFrames) {
-            anchorX = (anchorX >= frame.x + frame.width) 
-                        ? anchorX 
-                        : frame.x + frame.width
-            anchorY = anchorY <= frame.y 
-                        ? anchorY 
-                        : frame.y
-        }
-    }
-    
-    //give it a bit of space
-    anchorX = anchorX + 200
+        //setup new component
+        const newComponent = figma.createComponent()
+        newComponent.name = component.name
+        newComponent.x = component.x
+        newComponent.y = component.y
 
-    //Make Calendar
-    let currentX = anchorX
-    let currentY = anchorY
-    for (let i = 0; i <= parseInt(message.weeks) + 1; i++) {
-        for (let j = 0; j < 7; j++) {
+        //each layer in component
+        for (const key in component.layers) {
+            let node: RectangleNode | TextNode
+            const layer = component.layers[key]
 
-            const curDate = currentDateStart.clone().add((i * 7) + j, 'days')
-            const curMonthName = curDate.format('MMMM')
+            if (layer.set.type === 'RECTANGLE') node = figma.createRectangle()
+            if (layer.set.type === 'TEXT') node = figma.createText()
 
-            let node: InstanceNode
-
-            if (i == 0) {
-                if (j >= 0 && j <= 4) node = daynameComponent.createInstance()
-                else node = daynameWeekendComponent.createInstance()
-            } else {
-                if (j >= 0 && j <= 4) node = dayComponent.createInstance()
-                else node = weekendComponent.createInstance()
+            //each property in layer
+            for (const key in layer) {
+                if (key == 'fontName') await figma.loadFontAsync(layer[key])
+                if (key != 'set') node[key] = layer[key]
             }
 
-            node.x = currentX
-            node.y = currentY
-            currentX += node.width
+            //if layer has a fill style, add it
+            if (layer.set.fillStyle) node.fillStyleId = styles[layer.set.fillStyle].id
 
-            let instanceName = node.name.replace(/cal#/g, "calItem#")
-            node.name = instanceName
-
-            let dayNameNode, dayTextNode, weekTextNode, monthTextNode, backgroundNode
-
-            if (i == 0) {
-                dayNameNode = node.findOne(n => n.name === '#dayname' && n.type == 'TEXT') as TextNode
-                if (dayNameNode) {
-                    if (j >= 0 && j <= 4) dayNameNode.characters = curDate.format('dddd')
-                    else dayNameNode.characters = curDate.format('ddd')
-                }
-            } else {
-                dayTextNode = node.findOne(n => n.name === '#day' && n.type == 'TEXT') as TextNode
-                weekTextNode = node.findOne(n => n.name === '#week' && n.type == 'TEXT') as TextNode
-                monthTextNode = node.findOne(n => n.name === '#month' && n.type == 'TEXT') as TextNode
-                backgroundNode = node.findOne(n => n.name === "#background" && n.type === 'RECTANGLE') as RectangleNode
-
-                if (dayTextNode) dayTextNode.characters = curDate.format('DD')
-                if (weekTextNode) {
-                    if (j == 0) weekTextNode.characters = String(i - 1)
-                    else weekTextNode.characters = ""
-                }
-                if (monthTextNode) {
-                    if (curDate.date() === 1) monthTextNode.characters = curMonthName //Only add month at start of every month
-                    else if ((curDate.date() === 2 || curDate.date() === 3) && curDate.day() === 1) monthTextNode.characters = curMonthName //If it was in weekend, still add on Monday
-                    else monthTextNode.characters = ""
-
-                    if (i === 1 && j === 0) monthTextNode.characters = curMonthName //Always add month on first box anyway
-                }
-
-                //Alternate month for colours
-                if (curDate.date() === 1) monthSwitch = !monthSwitch
-                if (backgroundNode) {
-                    if (monthSwitch) {
-                        if (j >= 0 && j <= 4) backgroundNode.fillStyleId = styles.backgroundAltStyle.id
-                        else backgroundNode.fillStyleId = styles.backgroundAltWeekendStyle.id
-                    }
-                }
-            }
+            //resize layer to set size
+            node.resizeWithoutConstraints(layer.set.width, layer.set.height)
+            newComponent.appendChild(node)
         }
 
-        currentX = anchorX //reset x
-        if (i == 0) currentY += daynameComponent.height
-        else currentY += dayComponent.height
+        //resize component to layers
+        resizeElementToNodes(newComponent, newComponent.children, 0)
+
     }
 
-    const calendarItems = figma.currentPage.findAll(n => n.name.includes('calItem#') && n.parent.type == 'PAGE') as InstanceNode[]
-    frameNodesAndShow(calendarItems, "Your Calendar", 80)
+    //Make a new named frame with 100 padding around components
+    const calendarComponents = figma.currentPage.findAll(n => (n.name.includes('cal#')))
+    frameNodesAndShow(calendarComponents, "Calendar Components", 60, "#BBB")
 
-    return "Calendar built. ⚡️"
+    //enable UI button
+    figma.ui.postMessage('built')
+    return "Components Built. ⚡️"
 }
